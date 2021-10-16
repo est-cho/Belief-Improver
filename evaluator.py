@@ -169,7 +169,7 @@ def parse_mutated_xml(mutated):
         pair_list.append((input_index, m_list))
     return pair_list
 
-def evaluate(param, s_list, pair_list, data_file, output_prefix):
+def evaluate(param, s_list, pair_list, data_file, output_prefix, print_all):
     file = open(data_file,'r',encoding = 'utf-8-sig')
     data = csv.reader(file)
     const_header = next(data)
@@ -194,26 +194,27 @@ def evaluate(param, s_list, pair_list, data_file, output_prefix):
         file_prefix = output_prefix + 'o_' + str(new_pair[0].index) + '_'
         og_eval = calculate_score('o_', new_pair[0], variable_data, const_values)
 
-        mutated_statements = []
         m_eval_list = []
         for m in new_pair[1]:
             m_eval = calculate_score('m_', m, variable_data, const_values)
             m_eval_list.append(m_eval)
-        
-        improved = []
-        for m in sorted(m_eval_list, key=lambda x: (x[5]), reverse=True):
-            if m[5] >= og_eval[5]:
-                improved.append(m)
-            else:
-                break
 
         with open(file_prefix + 'evaluation.csv', 'w', newline='') as csvfile: 
             csv_writer = csv.writer(csvfile) 
             csv_writer.writerow(['Original Statement', 'tp', 'tn', 'fp', 'fn', 'score'])
             csv_writer.writerow(og_eval)
-            csv_writer.writerow(['Alternative Statements', 'tp', 'tn', 'fp', 'fn', 'Score'])
-            for m in sorted(m_eval_list, key=lambda x: (x[5]), reverse=True):
-                csv_writer.writerow(m)
+            if print_all:
+                csv_writer.writerow(['Alternative Statements', 'tp', 'tn', 'fp', 'fn', 'Score'])
+                for m in sorted(m_eval_list, key=lambda x: (x[5]), reverse=True):
+                    csv_writer.writerow(m)
+            else:
+                csv_writer.writerow(['Improved Statements', 'tp', 'tn', 'fp', 'fn', 'Score'])
+                for m in sorted(m_eval_list, key=lambda x: (x[5]), reverse=True):
+                    if m[5] >= og_eval[5]:
+                        csv_writer.writerow(m)
+                    else:
+                        break
+                    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluator')
@@ -221,14 +222,15 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mutated', required=True)
     parser.add_argument('-d', '--data', required=True)
     parser.add_argument('-o', '--output-prefix', required=False)
+    parser.add_argument('-a', '--all-statements', required=False, type=bool, default=False)
     
     args = parser.parse_args()
 
     output_prefix = ''
     if args.output_prefix:
         output_prefix = args.output_prefix + '_'
-    
+
     (param, s_list) = parse_input_xml(args.initial)
     pair_list = parse_mutated_xml(args.mutated)
-    evaluate(param, s_list, pair_list, args.data, output_prefix)
+    evaluate(param, s_list, pair_list, args.data, output_prefix, args.all_statements)
     
