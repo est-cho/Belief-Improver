@@ -1,0 +1,44 @@
+<body>
+    <parameter>
+        <timeRange>100</timeRange>
+        <variableRange>2</variableRange>
+        <constantRange>0</constantRange>
+    </parameter>
+    <statement name = "o_1">
+        <prop name="left">
+            <value name="left">
+                <type>v</type>
+                <index>0</index>
+                <time>0</time>
+            </value>
+            <op>==</op>
+            <value name="right">
+                <type>v</type>
+                <index>0</index>
+                <time>0</time>
+            </value>
+        </prop>
+        <prop name="right">
+            <value name="left">
+                <type>v</type>
+                <index>0</index>
+                <time>0</time>
+            </value>
+            <op>==</op>
+            <value name="right">
+                <type>v</type>
+                <index>1</index>
+                <time>1</time>
+            </value>
+        </prop>
+    </statement>
+</body>
+
+<!-- 
+==  ==      equals to
+<   &lt;    less than
+≤   &lt=;   less than or equal to
+>   &gt;    greater than
+≥   &gt=;   greater than or equal to
+!=  !=      not equals to
+-->
